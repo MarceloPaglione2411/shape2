@@ -1,0 +1,51 @@
+name: Deploy to Azure App Service
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  REGISTRY_NAME: shaperegistryteste1.azurecr.io 
+  IMAGE_NAME: latest
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout do código
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    # Login no Azure
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }} #dados sensiveis colocado secrets/actions Azure
+
+    # Login no ACR
+    - name: Login to ACR
+      run: |
+        az acr login --name ${{ env.shaperegistryteste1 }}
+
+    # Build da Imagem Docker
+    - name: Build Docker Image
+      run: |
+        docker build -t ${{ env.shaperegistryteste1 }}/${{ env.marcelopaglioneshape }}:${{ github.sha }} .
+
+    # Push para o ACR
+    - name: Push Docker Image to ACR
+      run: |
+        docker push ${{ env.shaperegistryteste1 }}/${{ env.marcelopaglioneshape }}:${{ github.sha }}
+
+    # Atualizar App Service
+    - name: Update App Service to Use New Image
+      run: |
+        az webapp config container set \
+          --name app-serv-plan-shape \
+          --resource-group rg-shape-appteste1 \
+          --docker-custom-image-name ${{ env.shaperegistryteste1 }}/${{ env.marcelopaglioneshape }}:${{ github.sha }} \
+          --docker-registry-server-url https://${{ env.shaperegistryteste1 }} \
+          --docker-registry-server-user ${{ secrets.shaperegistryteste1 }} \
+          --docker-registry-server-password ${{ secrets.aaw8XsRapCKuay1HEXKzYaYZQHjKcjiSt1u7I49VZy+ACRDmWlRt }}
