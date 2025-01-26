@@ -2,10 +2,12 @@
 
 Pipeline:
 
-push no branch main: A pipeline é acionada automaticamente ao fazer um push no branch principal.
+1º Login no Azure, usando GitHub Secret AZURE_CREDENTIALS para autenticar no Azure.
 
-Login no Azure e no ACR: Faz login nos serviços usando credenciais armazenadas como secrets.
+2º Login no ACR e faz o Build da imagem:
 
-Build e Push da Imagem: Gera uma nova imagem Docker com a tag baseada no commit SHA e faz o push para o ACR.
+3º Cria a imagem Docker com o código atualizado e Push 
 
-Atualiza o App Service: Atualiza a configuração do App Service para utilizar a nova imagem Docker.
+4º Envia a imagem Docker para o ACR.
+
+5º Configura o App Service para utilizar a nova imagem Docker.
