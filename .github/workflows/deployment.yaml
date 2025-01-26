@@ -1,9 +1,7 @@
 name: Deploy to Azure Container Registry
 
 on:
-  push:
-    branches:
-      - main
+   workflow_dispatch:
 
 env:
   REGISTRY_NAME: shaperegistryteste1.azurecr.io 
